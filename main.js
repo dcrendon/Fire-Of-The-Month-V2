@@ -32,6 +32,10 @@ audio.addEventListener('timeupdate', () => {
   progress.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 })
 
+audio.addEventListener('ended', () => {
+  record.classList.remove('spin')
+})
+
 songInfo.innerHTML = `
 <article class="relative isolate overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 sm:pt-48 lg:pt-80 w-full md:w-1/2">
   <img src="https://i.ytimg.com/vi/${latestSong.youtubeID}/maxresdefault.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover">
