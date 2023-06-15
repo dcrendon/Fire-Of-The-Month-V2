@@ -1,9 +1,9 @@
 import './style.css'
 import { latestSong } from './data'
-import { gsap } from "gsap";
-import { Draggable } from "gsap/Draggable";
+import { gsap } from "gsap"
+import { Draggable } from "gsap/Draggable"
 
-gsap.registerPlugin(Draggable);
+gsap.registerPlugin(Draggable)
 
 const playBtn = document.querySelector('#play')
 const pauseBtn = document.querySelector('#pause')
@@ -11,6 +11,7 @@ const progress = document.querySelector('#progress')
 const songInfo = document.querySelector('#songInfo')
 const record = document.querySelector('#record')
 const audio = new Audio(`${latestSong.file}`)
+let startingRotation = 0
 
 playBtn.addEventListener('click', () => {
   audio.play()
@@ -48,25 +49,22 @@ songInfo.innerHTML = `
      <p><span class="font-bold">Posted: </span> ${latestSong.month}, ${latestSong.year}</p>
   </div>
 </article>
+<p class="font-xs mt-8">1 rotation = 10 seconds of song time</p>
 `
 
-const getRotationDegrees = (elm) => {
-  const style = window.getComputedStyle(elm, null);
-  const transform = style.getPropertyValue("-webkit-transform") ||
-                    style.getPropertyValue("-moz-transform") ||
-                    style.getPropertyValue("-ms-transform") ||
-                    style.getPropertyValue("-o-transform") ||
-                    style.getPropertyValue("transform");
-  
-  let angle = 0;
-  if (transform && transform !== 'none') {
-      const values = transform.split('(')[1].split(')')[0].split(',');
-      const a = values[0];
-      const b = values[1];
-      angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+Draggable.create("#record", {
+  type: "rotation",
+  onDragStart: function() {
+    startingRotation = Math.floor(this.rotation)
+    record.classList.remove('spin')
+    audio.pause()
+  },
+  onDragEnd: function() {
+    const delta = Math.floor((Math.floor(this.rotation) - startingRotation)/360)
+    const songTime = delta * 10
+    audio.currentTime = audio.currentTime + songTime
+    record.classList.add('spin')
+    record.style.animationPlayState = 'running'
+    audio.play()
   }
-
-  return (angle < 0) ? angle + 360 : angle;
-}
-
-Draggable.create("#record", {type: "rotation", inertia: true});
+})
