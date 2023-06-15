@@ -9,7 +9,7 @@ export const songs =
         link: "https://youtu.be/wcCwsj9NkCc",
         youtubeID: "wcCwsj9NkCc",
         file: "./DIRT-MCGERK.mp3",
-        color: "#421f2c"
+        gradientClass: "from-dirtmcgerk"
     },
     {
         index: 1,
@@ -20,7 +20,7 @@ export const songs =
         link: "https://youtu.be/nsCsM1xqiTY",
         youtubeID: "nsCsM1xqiTY",
         file: "./the-hillbillies.mp3",
-        color: "#283a9a"
+        gradientClass: "from-hillbillies"
     },
 ]
 

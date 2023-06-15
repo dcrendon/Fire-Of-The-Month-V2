@@ -55,7 +55,7 @@ const setSongInfo = (song) => {
     <p class="font-xs mt-8">1 rotation = 10 seconds of song time</p>
     `
     document.body.className = ''
-    document.body.classList.add('bg-gradient-to-tr', `from-[${song.color}]`, 'to-white', 'dark:to-black', 'overflow-x-hidden')
+    document.body.classList.add('bg-gradient-to-tr', `${song.gradientClass}`, 'to-white', 'dark:to-black', 'overflow-x-hidden')
     prevSongsContainer.classList.add('hidden')
   } 
   else {
