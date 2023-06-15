@@ -1,5 +1,5 @@
 import './style.css'
-import { latestSong } from './data'
+import { latestSong, prevSongs } from './data'
 import { gsap } from "gsap"
 import { Draggable } from "gsap/Draggable"
 
@@ -10,6 +10,7 @@ const pauseBtn = document.querySelector('#pause')
 const progress = document.querySelector('#progress')
 const songInfo = document.querySelector('#songInfo')
 const record = document.querySelector('#record')
+const prevSongsContainer = document.querySelector('#prevSongs')
 const audio = new Audio(`${latestSong.file}`)
 let startingRotation = 0
 
@@ -37,20 +38,60 @@ audio.addEventListener('ended', () => {
   record.classList.remove('spin')
 })
 
-songInfo.innerHTML = `
-<article class="relative isolate overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-60 sm:pt-48 lg:pt-60 w-full md:w-1/2">
-  <img src="https://i.ytimg.com/vi/${latestSong.youtubeID}/maxresdefault.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover">
+const setSongInfo = (song) => {
+  if (song) {
+    songInfo.innerHTML = `
+    <article class="relative isolate overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-60 sm:pt-48 lg:pt-60 w-full md:w-1/2">
+      <img src="https://i.ytimg.com/vi/${song.youtubeID}/maxresdefault.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40"></div>
+      <div class="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+      <div class="mt-3 text-lg leading-6 text-white font-semibold">
+        <p class="pb-2"><span class="font-bold">Title: </span> ${song.title}</p>
+        <p class="pb-2"><span class="font-bold">Artist: </span> ${song.artist}</p>
+        <p class="pb-2"><span class="font-bold">Link: </span> <a class="hover:underline" href="${song.link}">${song.link}</a></p>
+        <p><span class="font-bold">FOTM: </span> ${song.month}, ${song.year}</p>
+      </div>
+    </article>
+    <p class="font-xs mt-8">1 rotation = 10 seconds of song time</p>
+    `
+    document.body.className = ''
+    document.body.classList.add('bg-gradient-to-tr', `from-[${song.color}]`, 'to-white', 'dark:to-black', 'overflow-x-hidden')
+    prevSongsContainer.classList.add('hidden')
+  } 
+  else {
+    songInfo.innerHTML = `
+    <article class="relative isolate overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-60 sm:pt-48 lg:pt-60 w-full md:w-1/2">
+      <img src="https://i.ytimg.com/vi/${latestSong.youtubeID}/maxresdefault.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40"></div>
+      <div class="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+      <div class="mt-3 text-lg leading-6 text-white font-semibold">
+        <p class="pb-2"><span class="font-bold">Title: </span> ${latestSong.title}</p>
+        <p class="pb-2"><span class="font-bold">Artist: </span> ${latestSong.artist}</p>
+        <p class="pb-2"><span class="font-bold">Link: </span> <a class="hover:underline" href="${latestSong.link}">${latestSong.link}</a></p>
+        <p><span class="font-bold">FOTM: </span> ${latestSong.month}, ${latestSong.year}</p>
+      </div>
+    </article>
+    <p class="font-xs mt-8">1 rotation = 10 seconds of song time</p>
+    `
+  }
+}
+
+const createCard = (song) => {
+  const newCard = `
+  <article class="songCard relative isolate overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-60 sm:pt-48 lg:pt-60 w-full md:w-1/2" data-index="${song.index}">
+  <img src="https://i.ytimg.com/vi/${song.youtubeID}/maxresdefault.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover">
   <div class="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40"></div>
   <div class="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
   <div class="mt-3 text-lg leading-6 text-white font-semibold">
-     <p class="pb-2"><span class="font-bold">Title: </span> ${latestSong.title}</p>
-     <p class="pb-2"><span class="font-bold">Artist: </span> ${latestSong.artist}</p>
-     <p class="pb-2"><span class="font-bold">Link: </span> <a class="hover:underline" href="${latestSong.link}">${latestSong.link}</a></p>
-     <p><span class="font-bold">Posted: </span> ${latestSong.month}, ${latestSong.year}</p>
+    <p class="pb-2"><span class="font-bold">Title: </span> ${song.title}</p>
+    <p class="pb-2"><span class="font-bold">Artist: </span> ${song.artist}</p>
+    <p class="pb-2"><span class="font-bold">Link: </span> <a class="hover:underline" href="${song.link}">${song.link}</a></p>
+    <p><span class="font-bold">FOTM: </span> ${song.month}, ${song.year}</p>
   </div>
-</article>
-<p class="font-xs mt-8">1 rotation = 10 seconds of song time</p>
-`
+  </article>
+  `
+  return newCard
+}
 
 Draggable.create("#record", {
   type: "rotation",
@@ -68,3 +109,20 @@ Draggable.create("#record", {
     audio.play()
   }
 })
+
+prevSongs.forEach(song => {
+  const card = createCard(song)
+  prevSongsContainer.innerHTML += card
+})
+
+const songCards = document.querySelectorAll('.songCard')
+songCards.forEach(card => {
+  card.addEventListener('click', () => {
+    const index = card.dataset.index
+    const song = prevSongs[index]
+    audio.src = song.file
+    setSongInfo(song)
+  })
+})
+
+setSongInfo()
