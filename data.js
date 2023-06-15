@@ -8,7 +8,8 @@ export const songs =
         artist: "Baby Keem & Kendrick Lamar",
         link: "https://youtu.be/nsCsM1xqiTY",
         youtubeID: "nsCsM1xqiTY",
-        file: "./the-hillbillies.mp3"
+        file: "./the-hillbillies.mp3",
+        color: "#283a9a"
     },
 ]
 
